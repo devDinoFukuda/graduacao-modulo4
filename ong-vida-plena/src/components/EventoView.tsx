@@ -128,8 +128,6 @@ export default function EventoView({ role }: { role: UserRole }) {
     const [selectedBeneficiarioId, setSelectedBeneficiarioId] = useState("");
 
     // Inputs for Actions
-    const [newFotoUrl, setNewFotoUrl] = useState("");
-
     // Expense Inputs
     const [gastoDesc, setGastoDesc] = useState("");
     const [gastoValDisplay, setGastoValDisplay] = useState("R$ 0,00");
@@ -655,10 +653,14 @@ export default function EventoView({ role }: { role: UserRole }) {
                                                 <TableCell>{formatCurrency(g.valorGasto)}</TableCell>
                                                 <TableCell>
                                                     <Button size="small" variation="link" onClick={async () => {
-                                                        try {
-                                                            const link = await getUrl({ path: g.s3LinkComprovante });
-                                                            window.open(link.url.toString(), '_blank');
-                                                        } catch (e) { alert("Erro ao abrir arquivo: " + e); }
+                                                        if (g.s3LinkComprovante) {
+                                                            try {
+                                                                const link = await getUrl({ path: g.s3LinkComprovante });
+                                                                window.open(link.url.toString(), '_blank');
+                                                            } catch (e) { alert("Erro ao abrir arquivo: " + e); }
+                                                        } else {
+                                                            alert("Nenhum comprovante anexado.");
+                                                        }
                                                     }}>Ver Comprovante</Button>
                                                 </TableCell>
                                             </TableRow>

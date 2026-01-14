@@ -1,28 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../../amplify/data/resource";
 import {
-    View, Heading, Flex, Card, Text, Badge, Grid, Loader, Button, Tabs, useTheme
+    View, Heading, Flex, Card, Text, Badge, Grid
 } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
 
 // --- CUSTOM SVG CHARTS (No External Deps) ---
-const ChartTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload) return null;
-    return (
-        <div style={{
-            position: 'absolute', background: 'rgba(0,0,0,0.8)', color: '#fff',
-            padding: '5px 10px', borderRadius: '4px', fontSize: '12px', pointerEvents: 'none',
-            top: 0, left: 0, zIndex: 100, transform: 'translate(10px, -50%)' // Simplistic positioning
-        }}>
-            <strong>{label}</strong>
-            {payload.map((p: any, i: number) => (
-                <div key={i} style={{ color: p.color }}>{p.name}: {p.value}</div>
-            ))}
-        </div>
-    );
-};
+
 
 // 1. Bar Chart Component
 const SimpleBarChart = ({ data }: { data: any[] }) => {
