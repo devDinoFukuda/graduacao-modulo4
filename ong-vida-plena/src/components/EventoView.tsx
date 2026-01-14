@@ -633,7 +633,7 @@ export default function EventoView({ role }: { role: UserRole }) {
                                     <Text fontWeight="bold" fontSize="small">Comprovante (Obrigatório)</Text>
                                     <StorageManager
                                         acceptedFileTypes={['image/*', 'application/pdf']}
-                                        path={`eventos/${editingId}/comprovantes/`}
+                                        path={`eventos/comprovantes/${editingId}/`}
                                         maxFileCount={1}
                                         onUploadSuccess={(event) => setGastoLink(event.key || "")}
                                         isResumable
@@ -711,7 +711,7 @@ export default function EventoView({ role }: { role: UserRole }) {
                             <Flex gap="0.5rem" direction="column">
                                 <StorageManager
                                     acceptedFileTypes={['image/*']}
-                                    path={`eventos/${editingId}/fotos/`}
+                                    path={`eventos/fotos/${editingId}/`}
                                     maxFileCount={5}
                                     onUploadSuccess={(event) => {
                                         // Auto-add database record on upload success
