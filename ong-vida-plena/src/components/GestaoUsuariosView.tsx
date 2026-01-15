@@ -4,15 +4,13 @@ import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../../amplify/data/resource";
 import {
     Button, Heading, View, Table, TableHead, TableRow,
-    TableCell, TableBody, Alert, Badge, Card, Text
+    TableCell, TableBody, Badge, Card, Text
 } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
 
 export default function GestaoUsuariosView() {
     const [usuarios, setUsuarios] = useState<Array<Schema["Usuario"]["type"]>>([]);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
 
     useEffect(() => { loadHas(); }, []);
 
@@ -34,8 +32,6 @@ export default function GestaoUsuariosView() {
             <Heading level={2}>Gestão de Acesso (Gerenciador)</Heading>
             <Text marginBottom="1rem">Controle de credenciais e perfis de acesso ao sistema.</Text>
 
-            {error && <Alert variation="error" isDismissible>{error}</Alert>}
-            {success && <Alert variation="success" isDismissible>{success}</Alert>}
 
             <Card variation="outlined" marginBottom="2rem" style={{ borderLeft: '5px solid orange' }}>
                 <Heading level={5}>Gerenciamento de Acesso</Heading>
