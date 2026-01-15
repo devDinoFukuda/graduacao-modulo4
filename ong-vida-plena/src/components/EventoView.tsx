@@ -605,20 +605,20 @@ export default function EventoView({ role }: { role: UserRole }) {
                                 </Flex>
                             </Card>
                             <TextField label="Nome (Imutável)" value={nome} isReadOnly={true} />
-                            <SelectField label="Tipo" value={tipo} onChange={e => setTipo(e.target.value)} isDisabled={status === 'Encerrado'}>
+                            <SelectField label="Tipo" value={tipo} onChange={e => setTipo(e.target.value)} isDisabled={status === 'Encerrado' || !canManageLifecycle}>
                                 <option value="Campanha de Saude">Campanha de Saúde</option>
                                 <option value="Comunidade">Cuidados na Comunidade</option>
                                 <option value="Diversao">Diversão na Comunidade</option>
                                 <option value="Natal">Natal Solidário</option>
                             </SelectField>
-                            <TextField label="Data" type="date" value={dataEvento} onChange={e => setDataEvento(e.target.value)} />
+                            <TextField label="Data" type="date" value={dataEvento} onChange={e => setDataEvento(e.target.value)} isDisabled={status === 'Encerrado' || !canManageLifecycle} />
                             <Flex>
-                                <SelectField label="Início" value={hrInicio} onChange={e => setHrInicio(e.target.value)} grow={1}>{listTimes.map(t => <option key={t} value={t}>{t}</option>)}</SelectField>
-                                <SelectField label="Fim" value={hrFim} onChange={e => setHrFim(e.target.value)} grow={1}>{listTimes.map(t => <option key={t} value={t}>{t}</option>)}</SelectField>
+                                <SelectField label="Início" value={hrInicio} onChange={e => setHrInicio(e.target.value)} grow={1} isDisabled={status === 'Encerrado' || !canManageLifecycle}>{listTimes.map(t => <option key={t} value={t}>{t}</option>)}</SelectField>
+                                <SelectField label="Fim" value={hrFim} onChange={e => setHrFim(e.target.value)} grow={1} isDisabled={status === 'Encerrado' || !canManageLifecycle}>{listTimes.map(t => <option key={t} value={t}>{t}</option>)}</SelectField>
                             </Flex>
                             <Button onClick={async () => {
                                 try { await client.models.Evento.update({ id: editingId!, tipoEvento: tipo, dataInicio: dataEvento, horarioInicio: hrInicio + ':00', horarioFim: hrFim + ':00' }); setSuccess("Salvo"); } catch (e: any) { setError(e.message) }
-                            }} isDisabled={status === 'Encerrado'}>Salvar Alterações</Button>
+                            }} isDisabled={status === 'Encerrado' || !canManageLifecycle}>Salvar Alterações</Button>
                         </Flex>
                     )}
 

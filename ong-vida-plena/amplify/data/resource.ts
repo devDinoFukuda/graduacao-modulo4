@@ -50,7 +50,7 @@ const schema = a.schema({
     fontesRecurso: a.hasMany('FonteRecurso', 'eventoId'),
   }).authorization(allow => [
     allow.groups(['Administrador']).to(['read', 'create', 'update']), // Ciclo de vida
-    allow.groups(['Operador']).to(['read']), // Operador apenas lê eventos para lançar gastos
+    allow.groups(['Operador']).to(['read', 'update']), // Operador atualiza saldo
     allow.guest().to(['read']), // Publicidade
     allow.authenticated().to(['read']),
   ]),
