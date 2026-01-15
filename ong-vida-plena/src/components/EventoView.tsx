@@ -150,7 +150,7 @@ export default function EventoView({ role }: { role: UserRole }) {
 
     // PERMISSIONS MATRIX
     const canManageLifecycle = role === 'Administrador'; // Cancel, Close
-    const canManageDetails = role === 'Operador'; // Add $$$, Participants, Photos
+    const canManageDetails = role === 'Operador' || role === 'Administrador'; // Add $$$, Participants, Photos
     const canSuspend = role === 'Administrador' || role === 'Operador';
 
     // --- Helpers ---
