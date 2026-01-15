@@ -470,7 +470,7 @@ export default function EventoView({ role }: { role: UserRole }) {
 
             {mode === 'list' && (
                 <View>
-                    <Button onClick={() => { resetForm(); setMode('create') }}>+ Novo Evento</Button>
+                    {role === 'Administrador' && <Button onClick={() => { resetForm(); setMode('create') }}>+ Novo Evento</Button>}
                     <View overflow="auto">
                         <Table highlightOnHover={true} marginTop="1rem" minWidth="600px">
                             <TableHead><TableRow><TableCell as="th">Nome</TableCell><TableCell as="th">Data</TableCell><TableCell as="th">Status</TableCell><TableCell as="th">Saldo</TableCell><TableCell as="th">Ação</TableCell></TableRow></TableHead>
@@ -509,6 +509,7 @@ export default function EventoView({ role }: { role: UserRole }) {
             {mode === 'create' && (
                 <Flex direction="column" gap="1rem">
                     <Button variation="link" onClick={() => setMode('list')}>&larr; Cancelar</Button>
+                    {error && <Alert variation="error">{error}</Alert>}
                     <Card variation="elevated">
                         <Heading level={4}>Novo Evento</Heading>
                         <Flex direction="column" gap="1rem" marginTop="1rem">
