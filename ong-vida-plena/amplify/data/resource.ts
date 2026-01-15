@@ -97,8 +97,7 @@ const schema = a.schema({
 
     evento: a.belongsTo('Evento', 'eventoId'),
   }).authorization(allow => [
-    allow.groups(['Operador']).to(['read', 'create', 'update']), // Apenas Operador lança
-    allow.groups(['Administrador']).to(['read']), // Auditoria (Read-Only)
+    allow.groups(['Operador', 'Administrador']).to(['read', 'create', 'update', 'delete']),
   ]),
 
   // 1.8 Entidade: FonteRecurso (Novas Doações/Caixa)
@@ -117,8 +116,7 @@ const schema = a.schema({
 
     evento: a.belongsTo('Evento', 'eventoId'),
   }).authorization(allow => [
-    allow.groups(['Operador']).to(['read', 'create', 'update']), // Apenas Operador lança
-    allow.groups(['Administrador']).to(['read']), // Auditoria (Read-Only)
+    allow.groups(['Operador', 'Administrador']).to(['read', 'create', 'update', 'delete']),
   ]),
 
   // 1.6 Entidade: FotoEvento
@@ -126,44 +124,49 @@ const schema = a.schema({
     eventoId: a.id().required(),
     s3LinkFoto: a.string().required(), // Key do Storage
 
-    evento: a.belongsTo('Evento', 'eventoId'),
-  }).authorization(allow => [
-    allow.groups(['Operador']).to(['read', 'create', 'update', 'delete']), // Operador gerencia fotos
-    allow.groups(['Administrador']).to(['read']), // Auditoria
-    allow.guest().to(['read']),
-    allow.authenticated().to(['read']),
-  ]),
+    // 1.6 Entidade: FotoEvento
+    FotoEvento: a.model({
+      eventoId: a.id().required(),
+      s3LinkFoto: a.string().required(), // Key do Storage
 
-  // 1.7 Entidade: AuditLog
-  AuditLog: a.model({
-    dataHora: a.datetime(), // Gerado via Frontend
-    usuario: a.string().required(),
-    tipoAcao: a.string().required(), // "CriarEvento", "CancelarEvento", etc.
-    justificativa: a.string(),
-  }).authorization(allow => [
-    allow.groups(['Administrador', 'Operador']).to(['read', 'create']), // Admin/Op cria log
-    // Gerenciador não vê logs operacionais, ver logs de sistema seria outra tabela
-  ]),
+      evento: a.belongsTo('Evento', 'eventoId'),
+    }).authorization(allow => [
+      allow.groups(['Operador']).to(['read', 'create', 'update', 'delete']), // Operador gerencia
+      allow.groups(['Administrador']).to(['read']), // Auditoria
+      allow.guest().to(['read']),
+      allow.authenticated().to(['read']),
+    ]),
 
-  // 1.8 Entidade: Usuario (Gestão de Acesso - RBAC)
-  Usuario: a.model({
-    email: a.string().required(), // Chave de identificação
-    nome: a.string(),
-    perfil: a.string().required(), // Enum: "Gerenciador", "Administrador", "Operador"
-  }).authorization(allow => [
-    allow.groups(['Gerenciador']).to(['read', 'create', 'update', 'delete']),
-    allow.authenticated().to(['read']), // Todos vêem seu perfil
-  ]),
-});
+    // 1.7 Entidade: AuditLog
+    AuditLog: a.model({
+      dataHora: a.datetime(), // Gerado via Frontend
+      usuario: a.string().required(),
+      tipoAcao: a.string().required(), // "CriarEvento", "CancelarEvento", etc.
+      justificativa: a.string(),
+    }).authorization(allow => [
+      allow.groups(['Administrador', 'Operador']).to(['read', 'create']), // Admin/Op cria log
+      // Gerenciador não vê logs operacionais, ver logs de sistema seria outra tabela
+    ]),
 
-export type Schema = ClientSchema<typeof schema>;
+    // 1.8 Entidade: Usuario (Gestão de Acesso - RBAC)
+    Usuario: a.model({
+      email: a.string().required(), // Chave de identificação
+      nome: a.string(),
+      perfil: a.string().required(), // Enum: "Gerenciador", "Administrador", "Operador"
+    }).authorization(allow => [
+      allow.groups(['Gerenciador']).to(['read', 'create', 'update', 'delete']),
+      allow.authenticated().to(['read']), // Todos vêem seu perfil
+    ]),
+  });
 
-export const data = defineData({
-  schema,
-  authorizationModes: {
-    defaultAuthorizationMode: 'userPool',
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30, // Fallback apenas para facilitar dev inicial se necessário
+  export type Schema = ClientSchema<typeof schema>;
+
+  export const data = defineData({
+    schema,
+    authorizationModes: {
+      defaultAuthorizationMode: 'userPool',
+      apiKeyAuthorizationMode: {
+        expiresInDays: 30, // Fallback apenas para facilitar dev inicial se necessário
+      },
     },
-  },
-});
+  });

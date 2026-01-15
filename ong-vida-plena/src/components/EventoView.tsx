@@ -150,8 +150,13 @@ export default function EventoView({ role }: { role: UserRole }) {
 
     // PERMISSIONS MATRIX
     const canManageLifecycle = role === 'Administrador'; // Cancel, Close
-    const canManageDetails = role === 'Operador' || role === 'Administrador'; // Add $$$, Participants, Photos
     const canSuspend = role === 'Administrador' || role === 'Operador';
+
+    // Granular Permissions
+    const canAddFunding = role === 'Administrador' || role === 'Operador'; // Admin needs this for Event Creation
+    const canAddExpense = role === 'Operador'; // Operational task only
+    const canAddParticipant = role === 'Administrador' || role === 'Operador'; // Both verify people
+    const canAddPhoto = role === 'Operador'; // Operational task only (Admin is Audit/Read-Only)
 
     // --- Helpers ---
     const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
@@ -467,7 +472,7 @@ export default function EventoView({ role }: { role: UserRole }) {
             ) : (
                 <TextAreaField label="Justificativa (Min 100 chars)" value={fonteJustif} onChange={e => setFonteJustif(e.target.value)} marginTop="0.5rem" />
             )}
-            <Button size="small" marginTop="1rem" onClick={() => handleAddFonte(isDb)} isDisabled={status === 'Encerrado' || !canManageDetails}>+ Adicionar Recurso</Button>
+            <Button size="small" marginTop="1rem" onClick={() => handleAddFonte(isDb)} isDisabled={status === 'Encerrado' || !canAddFunding}>+ Adicionar Recurso</Button>
         </Card>
     );
 
@@ -655,7 +660,7 @@ export default function EventoView({ role }: { role: UserRole }) {
                                     {gastoLink && <Text color="green" fontSize="xs">Arquivo carregado: {gastoLink.split('/').pop()}</Text>}
                                 </View>
                                 <Button size="small" marginTop="1rem" onClick={handleAddExpense} isDisabled={
-                                    status === 'Encerrado' || !gastoDesc || !gastoVal || !gastoFornNome || !gastoFornDoc || !gastoLink || !canManageDetails
+                                    status === 'Encerrado' || !gastoDesc || !gastoVal || !gastoFornNome || !gastoFornDoc || !gastoLink || !canAddExpense
                                 }>Lançar Despesa</Button>
                             </Card>
                             <View overflow="auto">
@@ -699,7 +704,7 @@ export default function EventoView({ role }: { role: UserRole }) {
                                         <option value="">Selecione...</option>
                                         {availableBeneficiarios.map(b => <option key={b.id} value={b.id}>{b.nomeCompleto} ({b.documentoIdentidade})</option>)}
                                     </SelectField>
-                                    <Button onClick={handleAddParticipante} isDisabled={!selectedBeneficiarioId || status === 'Encerrado' || !canManageDetails}>Adicionar</Button>
+                                    <Button onClick={handleAddParticipante} isDisabled={!selectedBeneficiarioId || status === 'Encerrado' || !canAddParticipant}>Adicionar</Button>
                                 </Flex>
                             </Card>
 
@@ -727,20 +732,23 @@ export default function EventoView({ role }: { role: UserRole }) {
                         <Flex direction="column" gap="1rem" padding="1rem">
                             <Heading level={5}>Galeria de Fotos</Heading>
                             <Flex gap="0.5rem" direction="column">
-                                <StorageManager
-                                    acceptedFileTypes={['image/*']}
-                                    path={`eventos/fotos/${editingId}/`}
-                                    maxFileCount={5}
-                                    onUploadSuccess={(event) => {
-                                        // Auto-add database record on upload success
-                                        if (event.key) {
-                                            client.models.FotoEvento.create({ eventoId: editingId!, s3LinkFoto: event.key })
-                                                .then(() => loadRelated(editingId!))
-                                                .catch(e => console.error(e));
-                                        }
-                                    }}
-                                    isResumable
-                                />
+                                {canAddPhoto ? (
+                                    <StorageManager
+                                        acceptedFileTypes={['image/*']}
+                                        path={`eventos/fotos/${editingId}/`}
+                                        maxFileCount={5}
+                                        onUploadSuccess={(event) => {
+                                            if (event.key) {
+                                                client.models.FotoEvento.create({ eventoId: editingId!, s3LinkFoto: event.key })
+                                                    .then(() => loadRelated(editingId!))
+                                                    .catch(e => console.error(e));
+                                            }
+                                        }}
+                                        isResumable
+                                    />
+                                ) : (
+                                    <Alert variation="warning">Apenas Operadores podem gerenciar a galeria de fotos.</Alert>
+                                )}
                                 <Text fontSize="small">Uploads são salvos automaticamente na galeria.</Text>
                             </Flex>
                             <Flex wrap="wrap" gap="0.5rem" marginTop="1rem">
