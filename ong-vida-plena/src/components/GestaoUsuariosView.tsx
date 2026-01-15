@@ -49,18 +49,22 @@ export default function GestaoUsuariosView() {
             {error && <Alert variation="error" isDismissible>{error}</Alert>}
             {success && <Alert variation="success" isDismissible>{success}</Alert>}
 
-            <Card variation="outlined" marginBottom="2rem" backgroundColor="var(--amplify-colors-neutral-10)">
-                <Heading level={5}>Novo Usuário</Heading>
-                <Flex alignItems="flex-end" wrap="wrap" marginTop="1rem">
-                    <TextField label="E-mail (Login)" value={email} onChange={e => setEmail(e.target.value)} grow={1} />
-                    <TextField label="Nome" value={nome} onChange={e => setNome(e.target.value)} grow={1} />
-                    <SelectField label="Perfil" value={perfil} onChange={e => setPerfil(e.target.value)}>
-                        <option value="Administrador">Administrador</option>
-                        <option value="Operador">Operador</option>
-                        <option value="Gerenciador">Gerenciador</option>
-                    </SelectField>
-                    <Button variation="primary" onClick={handleAdd}>Autorizar Acesso</Button>
-                </Flex>
+            <Card variation="outlined" marginBottom="2rem" style={{ borderLeft: '5px solid orange' }}>
+                <Heading level={5}>Gerenciamento de Acesso</Heading>
+                <Text marginTop="0.5rem">
+                    O <b>auto-cadastro</b> e a criação direta de usuários via aplicativo foram desabilitados por segurança (Política de Acesso Restrito).
+                </Text>
+                <Text marginTop="0.5rem">
+                    Para adicionar novos colaboradores (Gerentes, Admins ou Operadores):
+                </Text>
+                <View as="ol" marginTop="0.5rem" marginLeft="1rem">
+                    <li>Acesse o <b>AWS Console (Cognito)</b>.</li>
+                    <li>Crie o usuário enviando o convite por e-mail.</li>
+                    <li>Adicione o usuário ao respectivo <b>Grupo</b> de permissão.</li>
+                </View>
+                <Button variation="link" marginTop="0.5rem" onClick={() => window.open('https://console.aws.amazon.com/cognito/home', '_blank')}>
+                    Abrir AWS Cognito &rarr;
+                </Button>
             </Card>
 
             <Table>
