@@ -482,7 +482,10 @@ export default function EventoView({ role }: { role: UserRole }) {
 
             {mode === 'list' && (
                 <View>
-                    {role === 'Administrador' && <Button onClick={() => { resetForm(); setMode('create') }}>+ Novo Evento</Button>}
+                    <Button onClick={() => {
+                        if (role !== 'Administrador') { alert("Permissão Negada: Apenas Administradores podem criar eventos."); return; }
+                        resetForm(); setMode('create');
+                    }}>+ Novo Evento</Button>
                     <View overflow="auto">
                         <Table highlightOnHover={true} marginTop="1rem" minWidth="600px">
                             <TableHead><TableRow><TableCell as="th">Nome</TableCell><TableCell as="th">Data</TableCell><TableCell as="th">Status</TableCell><TableCell as="th">Saldo</TableCell><TableCell as="th">Ação</TableCell></TableRow></TableHead>
