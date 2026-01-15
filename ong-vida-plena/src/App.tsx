@@ -92,7 +92,7 @@ function AppContent() {
 
 function App() {
     return (
-        <Authenticator>
+        <Authenticator hideSignUp={true}>
             <AppContent />
         </Authenticator>
     );

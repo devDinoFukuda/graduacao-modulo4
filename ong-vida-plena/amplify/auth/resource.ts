@@ -9,4 +9,12 @@ export const auth = defineAuth({
     email: true,
   },
   groups: ['Gerenciador', 'Administrador', 'Operador'],
+  userAttributes: {
+    'custom:cpf': {
+      dataType: 'String',
+      mutable: true,
+      maxLen: 14,
+      minLen: 11,
+    }
+  }
 });
