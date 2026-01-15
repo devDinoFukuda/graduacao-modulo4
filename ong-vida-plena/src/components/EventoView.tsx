@@ -341,7 +341,7 @@ export default function EventoView({ role }: { role: UserRole }) {
         }
 
         try {
-            const evt = await client.models.Evento.create({
+            const { data: newEvt, errors } = await client.models.Evento.create({
                 nomeEvento: nome, tipoEvento: tipo,
                 verbaDisponivel: createTotalVerba, saldoAtual: createTotalVerba,
                 statusEvento: "Ativo",
@@ -349,14 +349,26 @@ export default function EventoView({ role }: { role: UserRole }) {
                 dataFim: dataEvento, horarioFim: hrFim + ":00"
             });
 
-            if (evt.data?.id) {
-                for (const f of tempFontes) {
-                    await client.models.FonteRecurso.create({ eventoId: evt.data.id, origem: f.origem, ...f as any });
-                }
-                await client.models.AuditLog.create({ usuario: "User", tipoAcao: "CriarEvento", dataHora: new Date().toISOString() });
-                setSuccess("Evento Criado!"); setMode("list"); resetForm();
+            if (errors) {
+                console.error("Erro API Amplify:", errors);
+                setError("Falha ao criar evento (API): " + errors.map(e => e.message).join(", "));
+                return;
             }
-        } catch (e: any) { setError(e.message); }
+
+            if (newEvt?.id) {
+                for (const f of tempFontes) {
+                    await client.models.FonteRecurso.create({ eventoId: newEvt.id, origem: f.origem, ...f as any });
+                }
+                await client.models.AuditLog.create({ usuario: "Admin", tipoAcao: "CriarEvento", dataHora: new Date().toISOString() });
+
+                resetForm(); // First clear everything
+                setSuccess("Evento Criado com Sucesso!"); // Then set success
+                setMode("list"); // Then switch mode
+            }
+        } catch (e: any) {
+            console.error("Erro Exception:", e);
+            setError("Erro inesperado: " + e.message);
+        }
     }
 
     // --- Generic Actions ---
