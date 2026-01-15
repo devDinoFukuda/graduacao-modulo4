@@ -3,17 +3,14 @@ import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../../amplify/data/resource";
 import {
-    Button, Flex, Heading, TextField, View, Table, TableHead, TableRow,
-    TableCell, TableBody, SelectField, Alert, Badge, Card, Text
+    Button, Heading, View, Table, TableHead, TableRow,
+    TableCell, TableBody, Alert, Badge, Card, Text
 } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
 
 export default function GestaoUsuariosView() {
     const [usuarios, setUsuarios] = useState<Array<Schema["Usuario"]["type"]>>([]);
-    const [email, setEmail] = useState("");
-    const [nome, setNome] = useState("");
-    const [perfil, setPerfil] = useState("Operador");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -24,15 +21,6 @@ export default function GestaoUsuariosView() {
             next: (d) => setUsuarios([...d.items])
         });
         return () => sub.unsubscribe();
-    }
-
-    async function handleAdd() {
-        if (!email || !nome) { setError("Campos obrigatórios."); return; }
-        try {
-            await client.models.Usuario.create({ email, nome, perfil });
-            setSuccess("Usuário adicionado/autorizado.");
-            setEmail(""); setNome("");
-        } catch (e: any) { setError(e.message); }
     }
 
     async function handleDelete(id: string) {
