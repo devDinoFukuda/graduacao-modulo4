@@ -601,7 +601,7 @@ export default function EventoView({ role }: { role: UserRole }) {
                                 <Flex gap="1rem" marginTop="0.5rem">
                                     {status === 'Ativo' && <Button variation="warning" size="small" onClick={handleSuspend} isDisabled={!canSuspend}>Suspender</Button>}
                                     {status === 'Suspenso' && <Button variation="primary" size="small" onClick={handleActivate} isDisabled={!canSuspend}>Ativar (Reabrir)</Button>}
-                                    <Button variation="destructive" size="small" onClick={handleCancel} isDisabled={status === 'Cancelado' || status === 'Encerrado' || !canManageLifecycle}>Cancelar (Admin)</Button>
+                                    <Button variation="destructive" size="small" onClick={handleCancel} isDisabled={status === 'Cancelado' || status === 'Encerrado' || !canManageLifecycle}>Finalizado (Admin)</Button>
                                 </Flex>
                             </Card>
                             <TextField label="Nome (Imutável)" value={nome} isReadOnly={true} />
